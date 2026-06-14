@@ -24,6 +24,7 @@ import { Route as ApiPublicWeeklyReportRouteImport } from './routes/api/public/w
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicPaymentRouteImport } from './routes/api/public/payment'
 import { Route as ApiPublicLeadRouteImport } from './routes/api/public/lead'
+import { Route as ApiPublicEventRouteImport } from './routes/api/public/event'
 
 const ThankYouRoute = ThankYouRouteImport.update({
   id: '/thank-you',
@@ -100,6 +101,11 @@ const ApiPublicLeadRoute = ApiPublicLeadRouteImport.update({
   path: '/api/public/lead',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEventRoute = ApiPublicEventRouteImport.update({
+  id: '/api/public/event',
+  path: '/api/public/event',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
   '/es/': typeof EsIndexRoute
+  '/api/public/event': typeof ApiPublicEventRoute
   '/api/public/lead': typeof ApiPublicLeadRoute
   '/api/public/payment': typeof ApiPublicPaymentRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
   '/es': typeof EsIndexRoute
+  '/api/public/event': typeof ApiPublicEventRoute
   '/api/public/lead': typeof ApiPublicLeadRoute
   '/api/public/payment': typeof ApiPublicPaymentRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
   '/es/': typeof EsIndexRoute
+  '/api/public/event': typeof ApiPublicEventRoute
   '/api/public/lead': typeof ApiPublicLeadRoute
   '/api/public/payment': typeof ApiPublicPaymentRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/es/privacy'
     | '/es/terms'
     | '/es/'
+    | '/api/public/event'
     | '/api/public/lead'
     | '/api/public/payment'
     | '/api/public/track'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/es/privacy'
     | '/es/terms'
     | '/es'
+    | '/api/public/event'
     | '/api/public/lead'
     | '/api/public/payment'
     | '/api/public/track'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/es/privacy'
     | '/es/terms'
     | '/es/'
+    | '/api/public/event'
     | '/api/public/lead'
     | '/api/public/payment'
     | '/api/public/track'
@@ -212,6 +224,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   ThankYouRoute: typeof ThankYouRoute
+  ApiPublicEventRoute: typeof ApiPublicEventRoute
   ApiPublicLeadRoute: typeof ApiPublicLeadRoute
   ApiPublicPaymentRoute: typeof ApiPublicPaymentRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -325,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicLeadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/event': {
+      id: '/api/public/event'
+      path: '/api/public/event'
+      fullPath: '/api/public/event'
+      preLoaderRoute: typeof ApiPublicEventRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -353,6 +373,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   ThankYouRoute: ThankYouRoute,
+  ApiPublicEventRoute: ApiPublicEventRoute,
   ApiPublicLeadRoute: ApiPublicLeadRoute,
   ApiPublicPaymentRoute: ApiPublicPaymentRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
