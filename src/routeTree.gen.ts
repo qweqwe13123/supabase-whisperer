@@ -22,6 +22,7 @@ import { Route as EsIndexRouteImport } from './routes/es.index'
 import { Route as EsTermsRouteImport } from './routes/es.terms'
 import { Route as EsPrivacyRouteImport } from './routes/es.privacy'
 import { Route as EsGraciasRouteImport } from './routes/es.gracias'
+import { Route as EsContactRouteImport } from './routes/es.contact'
 import { Route as EsApplicationRouteImport } from './routes/es.application'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicWeeklyReportRouteImport } from './routes/api/public/weekly-report'
@@ -94,6 +95,11 @@ const EsGraciasRoute = EsGraciasRouteImport.update({
   path: '/gracias',
   getParentRoute: () => EsRoute,
 } as any)
+const EsContactRoute = EsContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => EsRoute,
+} as any)
 const EsApplicationRoute = EsApplicationRouteImport.update({
   id: '/application',
   path: '/application',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
+  '/es/contact': typeof EsContactRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
+  '/es/contact': typeof EsContactRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/thank-you': typeof ThankYouRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
+  '/es/contact': typeof EsContactRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/admin'
     | '/es/application'
+    | '/es/contact'
     | '/es/gracias'
     | '/es/privacy'
     | '/es/terms'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/admin'
     | '/es/application'
+    | '/es/contact'
     | '/es/gracias'
     | '/es/privacy'
     | '/es/terms'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/thank-you'
     | '/_authenticated/admin'
     | '/es/application'
+    | '/es/contact'
     | '/es/gracias'
     | '/es/privacy'
     | '/es/terms'
@@ -370,6 +382,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EsGraciasRouteImport
       parentRoute: typeof EsRoute
     }
+    '/es/contact': {
+      id: '/es/contact'
+      path: '/contact'
+      fullPath: '/es/contact'
+      preLoaderRoute: typeof EsContactRouteImport
+      parentRoute: typeof EsRoute
+    }
     '/es/application': {
       id: '/es/application'
       path: '/application'
@@ -435,6 +454,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface EsRouteChildren {
   EsApplicationRoute: typeof EsApplicationRoute
+  EsContactRoute: typeof EsContactRoute
   EsGraciasRoute: typeof EsGraciasRoute
   EsPrivacyRoute: typeof EsPrivacyRoute
   EsTermsRoute: typeof EsTermsRoute
@@ -443,6 +463,7 @@ interface EsRouteChildren {
 
 const EsRouteChildren: EsRouteChildren = {
   EsApplicationRoute: EsApplicationRoute,
+  EsContactRoute: EsContactRoute,
   EsGraciasRoute: EsGraciasRoute,
   EsPrivacyRoute: EsPrivacyRoute,
   EsTermsRoute: EsTermsRoute,
