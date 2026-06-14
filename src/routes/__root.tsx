@@ -10,7 +10,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -37,9 +36,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -86,13 +82,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Trabajo Listo" },
       { property: "og:title", content: "Trabajo Listo — American-style resumes for U.S. jobs" },
       { property: "og:description", content: "Trabajo Listo helps Hispanic professionals build ATS-friendly American resumes, prepare for English interviews, and land jobs in the U.S." },
-      { property: "og:image", content: "https://copy-em-all-carefully.lovable.app/og-image.jpg" },
+      { property: "og:image", content: "/og-image.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Trabajo Listo — American-style resumes for U.S. jobs" },
       { name: "twitter:description", content: "Trabajo Listo helps Hispanic professionals build ATS-friendly American resumes, prepare for English interviews, and land jobs in the U.S." },
-      { name: "twitter:image", content: "https://copy-em-all-carefully.lovable.app/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [
       {

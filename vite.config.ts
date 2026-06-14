@@ -1,7 +1,6 @@
-// Standalone Vite config — NO dependency on any Lovable package.
-// This replicates everything the project needs to build and deploy anywhere
-// (Vercel / Netlify / VPS / Docker / Railway / Render) using only public,
-// open-source plugins. Read all secrets from environment variables (.env).
+// Standalone Vite config — no third-party platform dependencies.
+// Builds and deploys anywhere (Vercel / Netlify / VPS / Docker / Railway /
+// Render). All secrets are read from environment variables (.env).
 import { defineConfig, loadEnv, type PluginOption } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
@@ -9,8 +8,8 @@ import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { nitro } from "nitro/vite";
 
-// Detect the Lovable preview sandbox purely from env vars (no Lovable import).
-// When NOT in the sandbox the project behaves like a normal standalone app.
+// Detect a hosted preview sandbox (Cloudflare Workers runtime) purely from
+// env vars so the local/standalone build path stays the default.
 const isSandbox =
   process.env.LOVABLE_SANDBOX === "1" || !!process.env.DEV_SERVER__PROJECT_PATH;
 
@@ -40,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
   // Nitro generates the deployable server output at build time.
   if (command === "build") {
     if (isSandbox) {
-      // Lovable preview runs on Cloudflare Workers.
+      // Hosted preview runs on Cloudflare Workers.
       plugins.push(
         nitro({
           preset: "cloudflare-module",
