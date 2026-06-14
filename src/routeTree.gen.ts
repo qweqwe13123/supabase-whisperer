@@ -13,6 +13,7 @@ import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as EsRouteImport } from './routes/es'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApplicationRouteImport } from './routes/application'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -21,6 +22,7 @@ import { Route as EsIndexRouteImport } from './routes/es.index'
 import { Route as EsTermsRouteImport } from './routes/es.terms'
 import { Route as EsPrivacyRouteImport } from './routes/es.privacy'
 import { Route as EsGraciasRouteImport } from './routes/es.gracias'
+import { Route as EsContactRouteImport } from './routes/es.contact'
 import { Route as EsApplicationRouteImport } from './routes/es.application'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicWeeklyReportRouteImport } from './routes/api/public/weekly-report'
@@ -47,6 +49,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const EsRoute = EsRouteImport.update({
   id: '/es',
   path: '/es',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -86,6 +93,11 @@ const EsPrivacyRoute = EsPrivacyRouteImport.update({
 const EsGraciasRoute = EsGraciasRouteImport.update({
   id: '/gracias',
   path: '/gracias',
+  getParentRoute: () => EsRoute,
+} as any)
+const EsContactRoute = EsContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => EsRoute,
 } as any)
 const EsApplicationRoute = EsApplicationRouteImport.update({
@@ -128,12 +140,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/application': typeof ApplicationRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/es': typeof EsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
+  '/es/contact': typeof EsContactRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
@@ -148,11 +162,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/application': typeof ApplicationRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
+  '/es/contact': typeof EsContactRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
@@ -169,12 +185,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/application': typeof ApplicationRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/es': typeof EsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
+  '/es/contact': typeof EsContactRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
   '/es/terms': typeof EsTermsRoute
@@ -191,12 +209,14 @@ export interface FileRouteTypes {
     | '/'
     | '/application'
     | '/auth'
+    | '/contact'
     | '/es'
     | '/privacy'
     | '/terms'
     | '/thank-you'
     | '/admin'
     | '/es/application'
+    | '/es/contact'
     | '/es/gracias'
     | '/es/privacy'
     | '/es/terms'
@@ -211,11 +231,13 @@ export interface FileRouteTypes {
     | '/'
     | '/application'
     | '/auth'
+    | '/contact'
     | '/privacy'
     | '/terms'
     | '/thank-you'
     | '/admin'
     | '/es/application'
+    | '/es/contact'
     | '/es/gracias'
     | '/es/privacy'
     | '/es/terms'
@@ -231,12 +253,14 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/application'
     | '/auth'
+    | '/contact'
     | '/es'
     | '/privacy'
     | '/terms'
     | '/thank-you'
     | '/_authenticated/admin'
     | '/es/application'
+    | '/es/contact'
     | '/es/gracias'
     | '/es/privacy'
     | '/es/terms'
@@ -253,6 +277,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ApplicationRoute: typeof ApplicationRoute
   AuthRoute: typeof AuthRoute
+  ContactRoute: typeof ContactRoute
   EsRoute: typeof EsRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
@@ -292,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/es'
       fullPath: '/es'
       preLoaderRoute: typeof EsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -348,6 +380,13 @@ declare module '@tanstack/react-router' {
       path: '/gracias'
       fullPath: '/es/gracias'
       preLoaderRoute: typeof EsGraciasRouteImport
+      parentRoute: typeof EsRoute
+    }
+    '/es/contact': {
+      id: '/es/contact'
+      path: '/contact'
+      fullPath: '/es/contact'
+      preLoaderRoute: typeof EsContactRouteImport
       parentRoute: typeof EsRoute
     }
     '/es/application': {
@@ -415,6 +454,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface EsRouteChildren {
   EsApplicationRoute: typeof EsApplicationRoute
+  EsContactRoute: typeof EsContactRoute
   EsGraciasRoute: typeof EsGraciasRoute
   EsPrivacyRoute: typeof EsPrivacyRoute
   EsTermsRoute: typeof EsTermsRoute
@@ -423,6 +463,7 @@ interface EsRouteChildren {
 
 const EsRouteChildren: EsRouteChildren = {
   EsApplicationRoute: EsApplicationRoute,
+  EsContactRoute: EsContactRoute,
   EsGraciasRoute: EsGraciasRoute,
   EsPrivacyRoute: EsPrivacyRoute,
   EsTermsRoute: EsTermsRoute,
@@ -436,6 +477,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ApplicationRoute: ApplicationRoute,
   AuthRoute: AuthRoute,
+  ContactRoute: ContactRoute,
   EsRoute: EsRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
