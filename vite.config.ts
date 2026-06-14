@@ -39,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
   // Nitro generates the deployable server output at build time.
   if (command === "build") {
     if (isSandbox) {
-      // Lovable preview runs on Cloudflare Workers.
+      // Hosted preview runs on Cloudflare Workers.
       plugins.push(
         nitro({
           preset: "cloudflare-module",
