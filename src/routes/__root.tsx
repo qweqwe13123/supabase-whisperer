@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Trabajo Listo — American-style resumes for U.S. jobs" },
       { name: "twitter:description", content: "Trabajo Listo helps Hispanic professionals build ATS-friendly American resumes, prepare for English interviews, and land jobs in the U.S." },
-      { name: "twitter:image", content: "https://copy-em-all-carefully.lovable.app/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [
       {
