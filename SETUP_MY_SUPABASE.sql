@@ -72,12 +72,13 @@ CREATE TABLE public.visitors (
   last_seen_at timestamptz NOT NULL DEFAULT now(),
   country text, city text, source text, referrer text, user_agent text, lang text
 );
-GRANT INSERT, UPDATE ON public.visitors TO anon, authenticated;
+GRANT INSERT ON public.visitors TO anon, authenticated;
 GRANT SELECT ON public.visitors TO authenticated;
 GRANT ALL ON public.visitors TO service_role;
 ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone inserts visitors" ON public.visitors FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "Anyone updates visitors" ON public.visitors FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+-- UPDATEs are performed by the server admin client only; no client UPDATE policy.
+CREATE POLICY "Admins read visitors" ON public.visitors FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admins read visitors" ON public.visitors FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
 
 CREATE TABLE public.page_views (
