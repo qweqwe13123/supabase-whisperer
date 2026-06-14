@@ -17,9 +17,14 @@ CREATE OR REPLACE FUNCTION public.has_role(_user_id uuid, _role public.app_role)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = _user_id AND role = _role)
 $$;
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
 
 CREATE POLICY "Users view own roles" ON public.user_roles FOR SELECT TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Admins view all roles" ON public.user_roles FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins manage roles" ON public.user_roles FOR ALL TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 CREATE TABLE public.leads (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -67,12 +72,13 @@ CREATE TABLE public.visitors (
   last_seen_at timestamptz NOT NULL DEFAULT now(),
   country text, city text, source text, referrer text, user_agent text, lang text
 );
-GRANT INSERT, UPDATE ON public.visitors TO anon, authenticated;
+GRANT INSERT ON public.visitors TO anon, authenticated;
 GRANT SELECT ON public.visitors TO authenticated;
 GRANT ALL ON public.visitors TO service_role;
 ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone inserts visitors" ON public.visitors FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "Anyone updates visitors" ON public.visitors FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+-- UPDATEs are performed by the server admin client only; no client UPDATE policy.
+CREATE POLICY "Admins read visitors" ON public.visitors FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admins read visitors" ON public.visitors FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
 
 CREATE TABLE public.page_views (

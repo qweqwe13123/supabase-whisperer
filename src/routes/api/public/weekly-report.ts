@@ -5,8 +5,21 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/api/public/weekly-report")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
         try {
+          // Shared-secret auth: caller must present WEEKLY_REPORT_SECRET.
+          const expected = process.env.WEEKLY_REPORT_SECRET;
+          if (!expected) {
+            return Response.json({ ok: false, error: "not configured" }, { status: 503 });
+          }
+          const auth = request.headers.get("authorization") ?? "";
+          const url = new URL(request.url);
+          const provided = auth.startsWith("Bearer ")
+            ? auth.slice(7)
+            : url.searchParams.get("secret") ?? "";
+          if (provided !== expected) {
+            return new Response("Unauthorized", { status: 401 });
+          }
           const { getAdmin, sendTelegramMessage, escapeHtml } = await import(
             "@/lib/notifications.server"
           );
