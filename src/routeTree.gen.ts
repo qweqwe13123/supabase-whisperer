@@ -13,6 +13,7 @@ import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as EsRouteImport } from './routes/es'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApplicationRouteImport } from './routes/application'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -47,6 +48,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const EsRoute = EsRouteImport.update({
   id: '/es',
   path: '/es',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/application': typeof ApplicationRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/es': typeof EsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/application': typeof ApplicationRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/application': typeof ApplicationRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/es': typeof EsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/'
     | '/application'
     | '/auth'
+    | '/contact'
     | '/es'
     | '/privacy'
     | '/terms'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/'
     | '/application'
     | '/auth'
+    | '/contact'
     | '/privacy'
     | '/terms'
     | '/thank-you'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/application'
     | '/auth'
+    | '/contact'
     | '/es'
     | '/privacy'
     | '/terms'
@@ -253,6 +265,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ApplicationRoute: typeof ApplicationRoute
   AuthRoute: typeof AuthRoute
+  ContactRoute: typeof ContactRoute
   EsRoute: typeof EsRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       path: '/es'
       fullPath: '/es'
       preLoaderRoute: typeof EsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -436,6 +456,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ApplicationRoute: ApplicationRoute,
   AuthRoute: AuthRoute,
+  ContactRoute: ContactRoute,
   EsRoute: EsRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
