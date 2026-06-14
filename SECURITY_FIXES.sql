@@ -14,9 +14,9 @@ CREATE POLICY "Admins manage roles" ON public.user_roles
   USING (public.has_role(auth.uid(), 'admin'))
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
--- 3) has_role() is SECURITY DEFINER and was EXECUTABLE by anon/authenticated.
---    Restrict EXECUTE so only the server (and RLS policies) can call it.
-REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO service_role;
--- RLS policies that reference has_role() continue to work — they run with
--- definer privileges on the policy expression, not the caller's EXECUTE grant.
+-- 3) has_role() is SECURITY DEFINER. Revoke EXECUTE from PUBLIC/anon so
+--    unauthenticated users can't probe role membership. authenticated keeps
+--    EXECUTE because RLS policies that reference has_role() are evaluated as
+--    the calling role and need it.
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated, service_role;
