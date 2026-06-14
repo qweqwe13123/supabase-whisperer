@@ -148,6 +148,7 @@ function RootComponent() {
           visitor_id: visitorId,
           path: window.location.pathname,
           lang: document.documentElement.lang || undefined,
+          referrer: document.referrer || undefined,
         }),
         keepalive: true,
       }).catch(() => {});
