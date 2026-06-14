@@ -13,13 +13,16 @@ import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as EsRouteImport } from './routes/es'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ApplicationRouteImport } from './routes/application'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EsIndexRouteImport } from './routes/es.index'
 import { Route as EsTermsRouteImport } from './routes/es.terms'
 import { Route as EsPrivacyRouteImport } from './routes/es.privacy'
 import { Route as EsGraciasRouteImport } from './routes/es.gracias'
 import { Route as EsApplicationRouteImport } from './routes/es.application'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicWeeklyReportRouteImport } from './routes/api/public/weekly-report'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicPaymentRouteImport } from './routes/api/public/payment'
@@ -46,9 +49,18 @@ const EsRoute = EsRouteImport.update({
   path: '/es',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApplicationRoute = ApplicationRouteImport.update({
   id: '/application',
   path: '/application',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -81,6 +93,11 @@ const EsApplicationRoute = EsApplicationRouteImport.update({
   path: '/application',
   getParentRoute: () => EsRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicWeeklyReportRoute = ApiPublicWeeklyReportRouteImport.update({
   id: '/api/public/weekly-report',
   path: '/api/public/weekly-report',
@@ -110,10 +127,12 @@ const ApiPublicEventRoute = ApiPublicEventRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/application': typeof ApplicationRoute
+  '/auth': typeof AuthRoute
   '/es': typeof EsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
@@ -128,9 +147,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/application': typeof ApplicationRoute
+  '/auth': typeof AuthRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
@@ -145,11 +166,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/application': typeof ApplicationRoute
+  '/auth': typeof AuthRoute
   '/es': typeof EsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/es/application': typeof EsApplicationRoute
   '/es/gracias': typeof EsGraciasRoute
   '/es/privacy': typeof EsPrivacyRoute
@@ -166,10 +190,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/application'
+    | '/auth'
     | '/es'
     | '/privacy'
     | '/terms'
     | '/thank-you'
+    | '/admin'
     | '/es/application'
     | '/es/gracias'
     | '/es/privacy'
@@ -184,9 +210,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/application'
+    | '/auth'
     | '/privacy'
     | '/terms'
     | '/thank-you'
+    | '/admin'
     | '/es/application'
     | '/es/gracias'
     | '/es/privacy'
@@ -200,11 +228,14 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/application'
+    | '/auth'
     | '/es'
     | '/privacy'
     | '/terms'
     | '/thank-you'
+    | '/_authenticated/admin'
     | '/es/application'
     | '/es/gracias'
     | '/es/privacy'
@@ -219,7 +250,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ApplicationRoute: typeof ApplicationRoute
+  AuthRoute: typeof AuthRoute
   EsRoute: typeof EsRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
@@ -261,11 +294,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/application': {
       id: '/application'
       path: '/application'
       fullPath: '/application'
       preLoaderRoute: typeof ApplicationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -310,6 +357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EsApplicationRouteImport
       parentRoute: typeof EsRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/weekly-report': {
       id: '/api/public/weekly-report'
       path: '/api/public/weekly-report'
@@ -348,6 +402,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 interface EsRouteChildren {
   EsApplicationRoute: typeof EsApplicationRoute
   EsGraciasRoute: typeof EsGraciasRoute
@@ -368,7 +433,9 @@ const EsRouteWithChildren = EsRoute._addFileChildren(EsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ApplicationRoute: ApplicationRoute,
+  AuthRoute: AuthRoute,
   EsRoute: EsRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
