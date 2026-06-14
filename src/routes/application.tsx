@@ -3,15 +3,11 @@ import { useEffect, useRef } from "react";
 import innerHtml from "../site-clone/inner.html?raw";
 import scriptText from "../site-clone/script.js?raw";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/application")({
   head: () => ({
     meta: [
-      { title: "Trabajo Listo — American resumes for Hispanic professionals in the U.S." },
-      {
-        name: "description",
-        content:
-          "We help Hispanic professionals in the U.S. build American-style resumes, prepare for interviews, and find better jobs.",
-      },
+      { title: "Application — Trabajo Listo" },
+      { name: "description", content: "Start your application with Trabajo Listo." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -22,21 +18,12 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  component: IndexEn,
+  component: ApplicationPage,
 });
 
-function IndexEn() {
+function ApplicationPage() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    // First-visit language preference: default to Spanish unless user already chose
-    try {
-      const chosen = localStorage.getItem("tl-lang-chosen");
-      if (!chosen) {
-        localStorage.setItem("tl-lang-chosen", "1");
-        window.location.replace("/es");
-        return;
-      }
-    } catch {}
     if (!ref.current) return;
     try {
       // eslint-disable-next-line no-new-func
@@ -44,6 +31,12 @@ function IndexEn() {
     } catch (err) {
       console.error("site-clone script error", err);
     }
+    // Auto-open the wizard form
+    setTimeout(() => {
+      const btn = document.querySelector<HTMLElement>("[data-open-form]");
+      btn?.click();
+    }, 50);
   }, []);
+
   return <div ref={ref} dangerouslySetInnerHTML={{ __html: innerHtml }} />;
 }

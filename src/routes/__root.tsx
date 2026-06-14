@@ -77,20 +77,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Trabajo Listo — American-style resumes for U.S. jobs" },
+      { name: "description", content: "Trabajo Listo helps Hispanic professionals build ATS-friendly American resumes, prepare for English interviews, and land jobs in the U.S." },
+      { name: "author", content: "Trabajo Listo" },
+      { name: "application-name", content: "Trabajo Listo" },
+      { name: "theme-color", content: "#3b82f6" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { property: "og:site_name", content: "Trabajo Listo" },
+      { property: "og:title", content: "Trabajo Listo — American-style resumes for U.S. jobs" },
+      { property: "og:description", content: "Trabajo Listo helps Hispanic professionals build ATS-friendly American resumes, prepare for English interviews, and land jobs in the U.S." },
+      { property: "og:image", content: "https://copy-em-all-carefully.lovable.app/og-image.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Trabajo Listo — American-style resumes for U.S. jobs" },
+      { name: "twitter:description", content: "Trabajo Listo helps Hispanic professionals build ATS-friendly American resumes, prepare for English interviews, and land jobs in the U.S." },
+      { name: "twitter:image", content: "https://copy-em-all-carefully.lovable.app/og-image.jpg" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "shortcut icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
+      { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/android-chrome-192x192.png" },
+      { rel: "icon", type: "image/png", sizes: "512x512", href: "/android-chrome-512x512.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/site.webmanifest" },
     ],
   }),
   shellComponent: RootShell,
@@ -115,6 +131,30 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    try {
+      let visitorId = localStorage.getItem("tl-visitor-id");
+      if (!visitorId) {
+        visitorId =
+          (crypto.randomUUID && crypto.randomUUID()) ||
+          `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem("tl-visitor-id", visitorId);
+      }
+      fetch("/api/public/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          visitor_id: visitorId,
+          path: window.location.pathname,
+          lang: document.documentElement.lang || undefined,
+        }),
+        keepalive: true,
+      }).catch(() => {});
+    } catch {
+      /* ignore tracking errors */
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
