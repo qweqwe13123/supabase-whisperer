@@ -23,6 +23,23 @@ export const Route = createFileRoute("/api/public/lead")({
           });
 
           await sendTelegramMessage(formatLeadMessage(data));
+
+          // Server-side TikTok Events API
+          try {
+            const { sendTikTokEvent } = await import("@/lib/tiktok-events.server");
+            await sendTikTokEvent({
+              event: "SubmitForm",
+              email: data.email ? String(data.email) : null,
+              phone: data.phone ? String(data.phone) : null,
+              ip: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null,
+              userAgent: request.headers.get("user-agent"),
+              url: request.headers.get("referer"),
+              eventId: data.order_id ? `lead-${String(data.order_id)}` : undefined,
+            });
+          } catch (e) {
+            console.error("tiktok lead event failed", e);
+          }
+
           return Response.json({ ok: true });
         } catch (err) {
           console.error("lead error", err);
