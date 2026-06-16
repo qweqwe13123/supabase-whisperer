@@ -36,6 +36,24 @@ export const Route = createFileRoute("/api/public/payment")({
           });
 
           await sendTelegramMessage(formatPaymentMessage(data));
+
+          // Server-side TikTok Events API
+          try {
+            const { sendTikTokEvent } = await import("@/lib/tiktok-events.server");
+            await sendTikTokEvent({
+              event: "CompletePayment",
+              email: data.email ? String(data.email) : null,
+              ip: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null,
+              userAgent: request.headers.get("user-agent"),
+              url: request.headers.get("referer"),
+              value: data.amount != null ? Number(data.amount) : null,
+              currency: data.currency ? String(data.currency) : "USD",
+              eventId: orderId ? `payment-${orderId}` : undefined,
+            });
+          } catch (e) {
+            console.error("tiktok payment event failed", e);
+          }
+
           return Response.json({ ok: true });
         } catch (err) {
           console.error("payment error", err);
