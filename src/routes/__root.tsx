@@ -162,6 +162,20 @@ function RootComponent() {
     }
   }, []);
 
+  // Fire TikTok Pixel PageView on SPA route changes
+  const router = useRouter();
+  useEffect(() => {
+    const unsub = router.subscribe("onResolved", () => {
+      try {
+        // @ts-expect-error TikTok pixel global
+        window.ttq?.page?.();
+      } catch {
+        /* ignore */
+      }
+    });
+    return () => unsub();
+  }, [router]);
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
